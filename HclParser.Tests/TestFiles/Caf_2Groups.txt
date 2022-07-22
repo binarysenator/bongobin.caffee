@@ -1,0 +1,45 @@
+﻿global_settings = {          
+    default_region = "region1"    
+    environment = "upg"
+    prefix = "db"
+    inherit_tags = true
+    regions = {
+        region1 = "uk south"      
+    }  
+}
+
+
+landingzone = {  
+    backend_type        = "azurerm"    
+    level               = "shared"
+    key                 = "core" 
+
+     tfstates = {      
+      lz-hub = {
+        level   = "landing_zone_hub" # points to locals.landingzone[]
+                
+        #tfstate               = "landingzonehub.tfstate"        
+        #resource_group_name   = "rg-terraform-storage"
+        #storage_account_name  = "stproddcatfuks"        
+        #container             = "landingzonehub"
+        #use_azuread_auth      = true
+
+        tfstate               = "cafup-hub.tfstate"        
+        resource_group_name   = "rg-danny-testing"
+        storage_account_name  = "terradsb"        
+        container             = "lztesting"
+        use_azuread_auth      = true
+
+
+      }
+      lz-nprd = {
+        level   = "landing_zone_nonproduction" # points to locals.landingzone[]
+                
+        tfstate               = "cafup-nprd.tfstate"        
+        resource_group_name   = "rg-danny-testing"
+        storage_account_name  = "terradsb"        
+        container             = "lztesting"
+        use_azuread_auth      = true
+      }
+    } 
+}

@@ -1,0 +1,1009 @@
+﻿global_settings = {          
+    default_region = "region1"    
+    environment = "upg"
+    prefix = "db"
+    inherit_tags = true
+    regions = {
+        region1 = "uk south"      
+    }  
+}
+
+
+landingzone = {  
+    backend_type        = "azurerm"    
+    level               = "shared"
+    key                 = "core" 
+
+     tfstates = {      
+      lz-hub = {
+        level   = "landing_zone_hub" # points to locals.landingzone[]
+                
+        #tfstate               = "landingzonehub.tfstate"        
+        #resource_group_name   = "rg-terraform-storage"
+        #storage_account_name  = "stproddcatfuks"        
+        #container             = "landingzonehub"
+        #use_azuread_auth      = true
+
+        tfstate               = "cafup-hub.tfstate"        
+        resource_group_name   = "rg-danny-testing"
+        storage_account_name  = "terradsb"        
+        container             = "lztesting"
+        use_azuread_auth      = true
+
+
+      }
+      lz-nprd = {
+        level   = "landing_zone_nonproduction" # points to locals.landingzone[]
+                
+        tfstate               = "cafup-nprd.tfstate"        
+        resource_group_name   = "rg-danny-testing"
+        storage_account_name  = "terradsb"        
+        container             = "lztesting"
+        use_azuread_auth      = true
+      }
+    } 
+}
+
+
+resource_groups = {
+    primary_rg = {
+        name   = "core-shared"
+        region = "region1"
+    }
+     shared_aks_group = {
+      name   = "core-shared-aks"
+      region = "region1"
+    }
+    logs_group = {
+      name   = "core-shared-logs"
+      region = "region1"
+    }
+    networking_rg = {
+        name   = "core-gateway"
+        region = "region1"
+    }
+
+}
+
+role_mapping = {
+  custom_role_mapping = {}
+
+  built_in_role_mapping = {
+    azure_container_registries = {      
+      hub_container_registry = {        
+        lz_key = "lz-hub"
+        "AcrPull" = {
+          aks_clusters = {
+            keys = ["cluster_1"]
+         } 
+        }
+      }
+    }
+    keyvaults = {      
+      kv1 = {              
+        "Key Vault Administrator" = {
+          apim_management_namespace_identities = {
+           keys = ["core_shared_apim"]
+         } 
+        }
+      }
+    }
+
+    subscriptions = {
+      # subcription level access
+      logged_in_subscription = {
+        "Managed Identity Operator" = {
+          aks_clusters = {
+            keys = ["cluster_1"]
+          }
+        }
+        "Virtual Machine Contributor" = {
+          aks_clusters = {
+            keys = ["cluster_1"]
+        }
+        }
+      }
+    }
+  }  
+}
+
+##currently hardwired to existing landing zone, but needs to be dynamic
+remote_objects =  {             
+    azuread_groups = {
+        primaryzone = {
+            lz-prod-spoke-vnet-svc-operators = {
+                id = "5742c365-ccbf-4e9d-b136-548081da1fde"
+            }            
+            dca-acr-pull-grp = {
+                id = "45738cba-b8b1-4eb9-8d00-511555270110"
+            }
+            aks-admin-group = {
+                id = "c0b077e3-99dd-4f28-840f-3d49d0b7c349" # tmp dca-root-mgmt-grp
+            }
+            pipline-bootstrap-cert-group = {
+                id = "98259c91-5259-4720-a185-9cd6fbe361ae"  
+            }
+            
+        }
+    }
+
+    keyvault_certificates = {
+        primaryzone = {
+            wild-bongobin-co-uk = {
+                secret_id = "https://kv-lz-bootstrap.vault.azure.net/secrets/wild-bongobin-couk"
+            }            
+        }
+    }
+
+}
+
+##
+
+##---Service bus start
+
+service_bus_namespaces = {
+  core_service_bus = {
+    name                = "core-bus"
+    resource_group_key  = "primary_rg"
+    sku                 = "Standard"
+  }
+}
+
+##---Service bus topics
+service_bus_topics = {
+  bookable_resources_topic = {
+    name                = "bookable-resources"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  crm_accountplan_accountplanbenefits_topic = {
+    name                = "crm-accountplan-accountplanbenefits"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  crm_accountplanbenefits_topic = {
+    name                = "crm-accountplanbenefits"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  crm_accountplans_topic = {
+    name                = "crm-accountplans"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  crm_accounts_topic = {
+    name                = "crm-accounts"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  crm_brands_topic = {
+    name                = "crm-brands"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  crm_contacts_topic = {
+    name                = "crm-contacts"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  crm_emergencycontacts_topic = {
+    name                = "crm-emergencycontacts"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  crm_leads_topic = {
+    name                = "crm-leads"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  crm_policies_topic = {
+    name                = "crm-policies"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  crm_policypatients_topic = {
+    name                = "crm-policypatients"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  diagnostic_results_topic = {
+    name                = "diagnostic-results"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  user_accounts_topic = {
+    name                = "user-accounts"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  },
+  configuration_topic = {
+    name                = "configuration"
+    resource_group_key  = "primary_rg"
+    service_bus_namespace_key = "core_service_bus"
+  }
+}
+
+##---AKS start
+aks_clusters = {
+  cluster_1 = {
+    name               = "shared"
+    resource_group_key = "shared_aks_group"    
+
+    kubernetes_version = "1.21.2"
+
+    identity = {
+      type = "SystemAssigned"     
+    }
+
+    #vnet_key = "spoke_aks_re1"
+    lz_key    = "lz-nprd"
+    vnet_key  = "nprd_shared_vnet_spoke"
+
+    network_profile = {      
+        network_plugin    = "azure"
+        load_balancer_sku = "Standard"      
+    }
+    
+
+    role_based_access_control = {
+      enabled = true
+      azure_active_directory = {
+        managed = true
+      }
+    }  
+
+    admin_groups = {
+      lz_key = "primaryzone"
+      # ids = []
+      azuread_group_keys = ["aks-admin-group"]
+    }
+
+    
+    addon_profile = {
+      oms_agent = {
+        enabled           = true
+        log_analytics_key = "central_logs_region1"
+      }
+    }
+
+    load_balancer_profile = {
+      # Only one option can be set
+      managed_outbound_ip_count = 1
+      # outbound_ip_prefix_ids = []
+      # outbound_ip_address_ids = []
+    }
+
+    default_node_pool = {
+      name                  = "system"
+      vm_size               = "Standard_B2s"      
+      enabled_auto_scaling  = false
+      enable_node_public_ip = false
+      max_pods              = 30
+      node_count            = 1
+      os_disk_size_gb       = 512
+      tags = {
+        "project" = "system services"
+      }
+      subnet = {
+        key = "aks_nodepool_system"        
+      }
+     
+    }
+
+    node_resource_group_name = "core-shared-aks-nodes"
+
+node_pools = {
+      linux_pool = {
+        name                = "linuxpool1"
+        mode                = "User"        
+        max_pods            = 30
+        vm_size             = "standard_b2s"
+        node_count          = 1
+        enable_auto_scaling = true
+        max_count           = 2
+        min_count           = 1
+        os_disk_size_gb     = 512
+        tags = {
+          "project" = "user services"
+        }
+        subnet = {
+          key = "aks_nodepool_linux_user1"        
+        }
+        
+          
+      }
+       windows_pool = {
+        os_type             = "Windows"
+        name                = "wpool1"
+        mode                = "User"        
+        max_pods            = 30
+        vm_size             = "standard_d2s_v4"
+        node_count          = 1
+        enable_auto_scaling = true
+        max_count           = 2
+        min_count           = 1
+        os_disk_size_gb     = 512
+        tags = {
+          "project" = "user services"
+        }
+        subnet = {
+          key = "aks_nodepool_win_user1"        
+        }        
+      }
+    }    
+    
+    
+    diagnostic_profiles = {
+      central_logs_region1 = {
+        definition_key   = "azure_kubernetes_cluster"
+        destination_type = "log_analytics"
+        destination_key  = "central_logs"
+      }
+    }
+  }
+}
+
+
+##---AKS end
+
+##---Application Gateway start
+
+
+##---Application Gateway end
+
+
+## -- diagnostics
+diagnostic_log_analytics = {
+
+  central_logs_region1 = {
+    region             = "region1"
+    name               = "core-shared-logs"
+    resource_group_key = "logs_group"
+  }
+}
+
+### diagnostics end
+
+
+
+### apim start
+
+
+
+api_management_namespaces = {
+  core_shared_apim = {
+    resource_group_key  = "primary_rg"
+    name                = "shared-dcaiee"
+    publisher_name      = "DCA"
+    publisher_email     = "someone@dca.com"
+
+    sku_name            = "Developer_1"
+
+    virtual_network_type = "Internal"    
+    
+    network_configuration = {
+      lz_key = "lz-nprd"
+      vnet_key    = "nprd_shared_vnet_spoke"      
+      subnet_key  = "apim_subnet"           
+    }     
+
+ identity = { 
+  type = "SystemAssigned"   
+     #type = "UserAssigned" 
+     #managed_identity_keys = ["mi1"]  
+  } 
+  
+
+    products = {
+      dca = {
+        product_id      = "dca-product"
+        display_name    = "product display name"        
+        subscription_required   = false
+        approval_required       = false
+        published               = false
+      }
+    }
+
+    #custom_domains = {
+    #  api_bongobin_co_uk = {            
+    #    gateway = {
+    #      host_name = "api.bongobin.co.uk"
+    #      lz_key = "primaryzone"
+    #      key_vault_certificate_key = "wild-bongobin-co-uk"
+    #      default_ssl_binding = true          
+    #    }           
+    #  }    
+    #}
+  }
+}
+
+api_management_custom_domains = {   
+    api_bongobin_co_uk = {         
+      api_management_namespace_key = "core_shared_apim"       
+
+      gateway = {
+        host_name = "api.bongobin.co.uk"
+        #lz_key = "primaryzone"
+        #key_vault_certificate_key = "wild-bongobin-co-uk"
+
+        key_vault_certificate_key = "wild_bongobin"
+        default_ssl_binding = true          
+      }       
+    }
+}
+
+
+
+### apim end
+
+
+### start application gateway
+
+application_gateways = {
+  agw_core = {
+    resource_group_key  = "networking_rg"
+    name                = "application_gateway"
+
+    lz_key              = "lz-nprd"
+    vnet_key            = "nprd_shared_vnet_spoke"    
+    subnet_key          = "appgw_subnet_private"
+
+    sku_name            = "Standard_v2"
+    sku_tier             = "Standard_v2"
+    capacity = {
+      autoscale = {
+        minimum_scale_unit = 1
+        maximum_scale_unit = 2
+      }
+    }
+    zones        = ["1"]
+    enable_http2 = true
+
+    identity = {
+      managed_identity_keys = [
+        "apgw_keyvault_secrets"
+      ]
+    }
+
+    front_end_ip_configurations = {
+      public = {
+        name          = "public"
+        #lz_key    = "lz-nprd"
+        public_ip_key = "appgw_pip"
+        #subnet_key    = "appgw_subnet_public"
+      }    
+      private = {
+        name          = "private"
+
+        lz_key        = "lz-nprd"
+        vnet_key      = "nprd_shared_vnet_spoke"
+        subnet_key    = "appgw_subnet_private"
+        #subnet_id                     = "/subscriptions/97958dac-xxxx-xxxx-xxxx-9f436fa73bd4/resourceGroups/vupf-rg-example-agw/providers/Microsoft.Network/virtualNetworks/vupf-vnet-app_gateway_vnet/subnets/vupf-snet-app_gateway_subnet"
+        #subnet_cidr                   = "10.100.100.0/25"
+        subnet_cidr_index             = 0 # It is possible to have more than one cidr block per subnet
+        private_ip_offset             = 4 # e.g. cidrhost(10.10.0.0/25,4) = 10.10.0.4 => AGW private IP address
+        private_ip_address_allocation = "Static"
+      }  
+    }
+
+    front_end_ports = {
+      80 = {
+        name     = "http-80"
+        port     = 80
+        protocol = "Http"
+      }
+      443 = {
+        name     = "https-443"
+        port     = 443
+        protocol = "Https"
+      }      
+    }
+  }
+}
+
+public_ip_addresses = {
+  appgw_pip = {
+    name                    = "appgw"
+    resource_group_key      = "networking_rg"
+    sku                     = "Standard"
+    allocation_method       = "Static"
+    ip_version              = "IPv4"
+    zones                   = ["1"]
+    idle_timeout_in_minutes = "4"
+
+  }
+}
+
+managed_identities = {
+  apgw_keyvault_secrets = {
+    name               = "agw-secrets"
+    resource_group_key = "networking_rg"
+  }
+
+   #mi1 = {
+   # name               = "secrets-msi"
+   # resource_group_key = "primary_rg"
+  #}
+
+  #apim_certificates_keyvault_secrets = {
+  #  name               = "apim-bookstrap-secrets"
+  #  resource_group_key = "primary_rg"
+  #}
+
+  #asdfasdfasdf = {
+  #  name               = "apim-sssss-secrets"
+  #  resource_group_key = "primary_rg"
+  #}
+}
+
+
+application_gateway_applications = {
+  demo_app1_az1_agw1 = {
+
+    name                    = "core_apim"
+    application_gateway_key = "agw_core"
+
+    listeners = {      
+      public_ssl = {
+        name                           = "blue-api-public"
+        front_end_ip_configuration_key = "public"
+        front_end_port_key             = "80"
+        #host_name                      = "demoapp1.cafdemo.com"
+        host_names                      = ["blue-api.bongobin.co.uk"]
+        request_routing_rule_key       = "default"
+        keyvault_certificate = {
+          #certificate_key = "demoapp1.cafdemo.com"
+          
+          // To use manual uploaded cert
+           #certificate_name = "wild-bongobin-couk-3"
+           #keyvault_id     = "/subscriptions/dcb1757f-5710-436e-9601-bbc08db319f6/resourceGroups/rg-danny-testing/providers/Microsoft.KeyVault/vaults/dsb-vlttst"
+        }
+      }
+    }
+
+
+    request_routing_rules = {
+      default = {
+        rule_type = "PathBasedRouting"
+        #url_path_map_key = "path_map_1"
+
+        http_listener_key = "public"
+        backend_pool_key  = "apim"
+        http_settings_key = "backend_http_setting"
+        url_path_map_key  = "demo"
+      }
+    }
+
+    backend_http_setting = {
+      #port                                = 443
+      port                                = 80
+      #protocol                            = "Https"
+      protocol                            = "Http"
+      pick_host_name_from_backend_address = false
+      host_name                           = "api.bongobin.co.uk"
+    }    
+
+    backend_pool = {
+      fqdns = [        
+        "apim.bongobin.internal"
+      ]
+    }
+
+    url_path_maps = {
+      demo = {
+        name              = "api_path_map"
+        paths             = "/*"
+        rule_name         = "api_rile"
+        backend_pool_key  = "apim"
+        http_settings_key = "backend_http_setting"
+        
+        path_rules = {
+          pathRuleIdentity = {
+            name  = "pathRuleIdentity"
+            paths = ["/*"]
+            #rewrite_rule_set_key = "rule_set_1"
+          }
+        }
+      }
+    }
+
+    url_path_rules = {
+      rule1 = {
+        name             = "rule1-demo"
+        url_path_map_key = "demo"
+        paths            = "/test/rule1/*"
+      }
+      rule2 = {
+        name             = "rule2-demo"
+        url_path_map_key = "demo"
+        paths            = "/test/rule2/*"
+      }
+    }
+
+  } 
+
+  blue_memberweb_agw1 = {
+
+    name                    = "blue_memberweb"
+    application_gateway_key = "agw_core"
+
+    listeners = {      
+      public_ssl = {
+        name                           = "blue-memberweb-public"
+        front_end_ip_configuration_key = "public"
+        front_end_port_key             = "80"
+        #host_name                      = "demoapp1.cafdemo.com"
+        host_names                      = ["blue-memberweb.bongobin.co.uk"]
+        request_routing_rule_key       = "default"
+        keyvault_certificate = {
+          #certificate_key = "demoapp1.cafdemo.com"
+          
+          // To use manual uploaded cert
+           #certificate_name = "wild-bongobin-couk-3"
+           #keyvault_id     = "/subscriptions/dcb1757f-5710-436e-9601-bbc08db319f6/resourceGroups/rg-danny-testing/providers/Microsoft.KeyVault/vaults/dsb-vlttst"
+        }
+      }
+    }
+
+
+    request_routing_rules = {
+      default = {
+        rule_type = "PathBasedRouting"
+        #url_path_map_key = "path_map_1"
+
+        http_listener_key = "public"
+        backend_pool_key  = "apim"
+        http_settings_key = "backend_http_setting"
+        url_path_map_key  = "demo"
+      }
+    }
+
+    backend_http_setting = {
+      #port                                = 443
+      port                                = 80
+      #protocol                            = "Https"
+      protocol                            = "Http"
+      pick_host_name_from_backend_address = false
+      host_name                           = "blue-membermvc.bongobin.internal"
+    }    
+
+    backend_pool = {
+      fqdns = [        
+        "memberweb.bongobin.internal"
+      ]
+    }
+
+    url_path_maps = {
+      demo = {
+        name              = "blue_memberweb_path_map"
+        paths             = "/*"
+        rule_name         = "member_rule"
+        backend_pool_key  = "apim"
+        http_settings_key = "backend_http_setting"
+        
+        path_rules = {
+          pathRuleIdentity = {
+            name  = "pathRuleIdentity"
+            paths = ["/*"]
+            #rewrite_rule_set_key = "rule_set_1"
+          }
+        }
+      }
+    }
+
+    url_path_rules = {
+      rule1 = {
+        name             = "rule1-demo"
+        url_path_map_key = "demo"
+        paths            = "/test/rule1/*"
+      }
+      rule2 = {
+        name             = "rule2-demo"
+        url_path_map_key = "demo"
+        paths            = "/test/rule2/*"
+      }
+    }
+
+  } 
+
+
+  red_memberweb_agw1 = {
+
+    name                    = "red_memberweb"
+    application_gateway_key = "agw_core"
+
+    listeners = {      
+      public_ssl = {
+        name                           = "red-memberweb-public"
+        front_end_ip_configuration_key = "public"
+        front_end_port_key             = "80"
+        #host_name                      = "demoapp1.cafdemo.com"
+        host_names                      = ["red-memberweb.bongobin.co.uk"]
+        request_routing_rule_key       = "default"
+        keyvault_certificate = {
+          #certificate_key = "demoapp1.cafdemo.com"
+          
+          // To use manual uploaded cert
+           #certificate_name = "wild-bongobin-couk-3"
+           #keyvault_id     = "/subscriptions/dcb1757f-5710-436e-9601-bbc08db319f6/resourceGroups/rg-danny-testing/providers/Microsoft.KeyVault/vaults/dsb-vlttst"
+        }
+      }
+    }
+
+
+    request_routing_rules = {
+      default = {
+        rule_type = "PathBasedRouting"
+        #url_path_map_key = "path_map_1"
+
+        http_listener_key = "public"
+        backend_pool_key  = "apim"
+        http_settings_key = "backend_http_setting"
+        url_path_map_key  = "demo"
+      }
+    }
+
+    backend_http_setting = {
+      #port                                = 443
+      port                                = 80
+      #protocol                            = "Https"
+      protocol                            = "Http"
+      pick_host_name_from_backend_address = false
+      host_name                           = "red-membermvc.bongobin.internal"
+    }    
+
+    backend_pool = {
+      fqdns = [        
+        "memberweb.bongobin.internal"
+      ]
+    }
+
+    url_path_maps = {
+      demo = {
+        name              = "red_memberweb_path_map"
+        paths             = "/*"
+        rule_name         = "member_rule"
+        backend_pool_key  = "apim"
+        http_settings_key = "backend_http_setting"
+        
+        path_rules = {
+          pathRuleIdentity = {
+            name  = "pathRuleIdentity"
+            paths = ["/*"]
+            #rewrite_rule_set_key = "rule_set_1"
+          }
+        }
+      }
+    }
+
+    url_path_rules = {
+      rule1 = {
+        name             = "rule1-demo"
+        url_path_map_key = "demo"
+        paths            = "/test/rule1/*"
+      }
+      rule2 = {
+        name             = "rule2-demo"
+        url_path_map_key = "demo"
+        paths            = "/test/rule2/*"
+      }
+    }
+
+  } 
+
+  red_api_agw1 = {
+
+    name                    = "red_api"
+    application_gateway_key = "agw_core"
+
+    listeners = {      
+      public_ssl = {
+        name                           = "red-api-public"
+        front_end_ip_configuration_key = "public"
+        front_end_port_key             = "80"
+        #host_name                      = "demoapp1.cafdemo.com"
+        host_names                      = ["red-api.bongobin.co.uk"]
+        request_routing_rule_key       = "default"
+        keyvault_certificate = {
+          #certificate_key = "demoapp1.cafdemo.com"
+          
+          // To use manual uploaded cert
+           #certificate_name = "wild-bongobin-couk-3"
+           #keyvault_id     = "/subscriptions/dcb1757f-5710-436e-9601-bbc08db319f6/resourceGroups/rg-danny-testing/providers/Microsoft.KeyVault/vaults/dsb-vlttst"
+        }
+      }
+    }
+
+
+    request_routing_rules = {
+      default = {
+        rule_type = "PathBasedRouting"
+        #url_path_map_key = "path_map_1"
+
+        http_listener_key = "public"
+        backend_pool_key  = "apim"
+        http_settings_key = "backend_http_setting"
+        url_path_map_key  = "demo"
+      }
+    }
+
+    backend_http_setting = {
+      #port                                = 443
+      port                                = 80
+      #protocol                            = "Https"
+      protocol                            = "Http"
+      pick_host_name_from_backend_address = false
+      host_name                           = "red-api.bongobin.internal"
+    }    
+
+    backend_pool = {
+      fqdns = [        
+        "apim.bongobin.internal"
+      ]
+    }
+
+    url_path_maps = {
+      demo = {
+        name              = "red_api_path_map"
+        paths             = "/*"
+        rule_name         = "member_rule"
+        backend_pool_key  = "apim"
+        http_settings_key = "backend_http_setting"
+        
+        path_rules = {
+          pathRuleIdentity = {
+            name  = "pathRuleIdentity"
+            paths = ["/*"]
+            #rewrite_rule_set_key = "rule_set_1"
+          }
+        }
+      }
+    }
+
+    url_path_rules = {
+      rule1 = {
+        name             = "rule1-demo"
+        url_path_map_key = "demo"
+        paths            = "/test/rule1/*"
+      }
+      rule2 = {
+        name             = "rule2-demo"
+        url_path_map_key = "demo"
+        paths            = "/test/rule2/*"
+      }
+    }
+
+  } 
+
+}
+
+
+
+azuread_groups_membership2 = {
+  pipline-bootstrap-cert-group = { # ad group key
+    api_management_namespaces = {
+      apim = {        
+        group_lz_key = "primaryzone"
+        keys = ["core_shared_apim"]
+      }
+    }
+  }
+}
+
+### end application gateway
+
+
+
+keyvault_certificates = {
+  wild_bongobin = {
+
+    keyvault_key = "kv1"
+
+    # may only contain alphanumeric characters and dashes
+    name = "wildbongobin"
+
+    subject            = "CN=*.bongobin.co.uk"
+    validity_in_months = 12
+
+    subject_alternative_names = {
+      #  A list of alternative DNS names (FQDNs) identified by the Certificate.
+      # Changing this forces a new resource to be created.
+      dns_names = [
+        "*.bongobin.co.uk"        
+      ]
+
+      # A list of email addresses identified by this Certificate.
+      # Changing this forces a new resource to be created.
+      # emails = []
+
+      # A list of User Principal Names identified by the Certificate.
+      # Changing this forces a new resource to be created.
+      # upns = []
+    }
+
+    tags = {
+      type = "SelfSigned"
+    }
+
+    # Possible values include Self (for self-signed certificate),
+    # or Unknown (for a certificate issuing authority like Let's Encrypt
+    # and Azure direct supported ones).
+    # Changing this forces a new resource to be created
+    issuer_parameters = "Self"
+
+    exportable = true
+
+    # Possible values include 2048 and 4096.
+    # Changing this forces a new resource to be created.
+    key_size  = 2048
+    key_type  = "RSA"
+    reuse_key = true
+
+    # The Type of action to be performed when the lifetime trigger is triggered.
+    # Possible values include AutoRenew and EmailContacts.
+    # Changing this forces a new resource to be created.
+    action_type = "AutoRenew"
+
+    # The number of days before the Certificate expires that the action
+    # associated with this Trigger should run.
+    # Changing this forces a new resource to be created.
+    # Conflicts with lifetime_percentage
+    days_before_expiry = 30
+
+
+    # The percentage at which during the Certificates Lifetime the action
+    # associated with this Trigger should run.
+    # Changing this forces a new resource to be created.
+    # Conflicts with days_before_expiry
+    # lifetime_percentage = 90
+
+    # The Content-Type of the Certificate, such as application/x-pkcs12 for a PFX
+    # or application/x-pem-file for a PEM.
+    # Changing this forces a new resource to be created.
+    content_type = "application/x-pkcs12"
+
+    # A list of uses associated with this Key.
+    # Possible values include
+    # cRLSign, dataEncipherment, decipherOnly,
+    # digitalSignature, encipherOnly, keyAgreement, keyCertSign,
+    # keyEncipherment and nonRepudiation
+    # and are case-sensitive.
+    # Changing this forces a new resource to be created
+    key_usage = [
+      "cRLSign",
+      "dataEncipherment",
+      "digitalSignature",
+      "keyAgreement",
+      "keyCertSign",
+      "keyEncipherment",
+    ]
+  }
+}
+
+keyvaults = {
+  kv1 = {
+    name               = "certs"
+    resource_group_key = "primary_rg"
+    sku_name           = "standard"
+    enable_rbac_authorization = true
+
+    
+    #creation_policies = {
+    #  logged_in_user = {
+    #    certificate_permissions = ["Get", "List", "Update", "Create", "Import", "Delete", "Purge", "Recover"]
+    #    secret_permissions      = ["Set", "Get", "List", "Delete", "Purge", "Recover"]
+    #  }
+    #}
+  }
+}
+
+
+#keyvault_access_policies = {
+ # kv1 = {
+ #   mi1 = {
+ #     managed_identity_key    = "mi1"
+ #     certificate_permissions = ["Get", "List"]
+ #     secret_permissions      = ["Get", "List"]
+ #   }
+ # }
+#}

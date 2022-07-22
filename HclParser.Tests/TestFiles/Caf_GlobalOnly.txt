@@ -1,0 +1,9 @@
+﻿global_settings = {          
+    default_region = "region1"    
+    environment = "upg"
+    prefix = "db"
+    inherit_tags = true
+    regions = {
+        region1 = "uk south"      
+    }  
+}
