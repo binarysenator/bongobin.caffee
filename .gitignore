@@ -3,3 +3,9 @@
 ################################################################################
 
 /.vs/HCLParser
+/Caffee/bin/Debug/net6.0
+/Caffee/obj
+/HclParser/bin/Debug/net6.0
+/HclParser/obj
+/HclParser.Tests/bin/Debug/net6.0
+/HclParser.Tests/obj

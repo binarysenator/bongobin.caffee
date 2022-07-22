@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary2\Bongobin.HclParser.csproj" />
+    <ProjectReference Include="..\HclParser\Bongobin.HclParser.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace HclParser.Tests;
+namespace Bongobin.HclParser.Tests;
 
 public class ResourceReader
 {

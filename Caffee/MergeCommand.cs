@@ -1,8 +1,9 @@
 ﻿using Bongobin.HclParser;
 using Bongobin.HclParser.Exceptions;
+using caffee;
 using CommandLine;
 
-namespace caffee;
+namespace Bongobin.Caffee;
 
 [Verb("merge", HelpText = "Merges all tfvars files into a single file")]
 public class MergeCommand : ICommand

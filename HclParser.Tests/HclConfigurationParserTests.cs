@@ -1,5 +1,4 @@
 using System.Linq;
-using HclParser.Tests;
 using NUnit.Framework;
 
 namespace Bongobin.HclParser.Tests
