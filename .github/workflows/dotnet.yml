@@ -45,3 +45,11 @@ jobs:
      
     - name: End Sonar scan
       run: dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
+      
+    - name: Create Release 
+      uses: actions/create-release@v1 
+      if: ${{ steps.changelog.outputs.skipped == 'false' } 
+      env: 
+        GITHUB_TOKEN: ${{ secrets.github_token } 
+        release_name: ${{ steps.changelog.outputs.tag } 
+        body: ${{ steps.changelog.outputs.clean_changelog }
