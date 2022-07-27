@@ -9,3 +9,7 @@
 /HclParser/obj
 /HclParser.Tests/bin/Debug/net6.0
 /HclParser.Tests/obj
+/Caffee/bin/Release/net6.0
+/HclParser/bin/Release/net6.0
+/HclParser.Tests/bin/Release/net6.0
+/.vs/ProjectEvaluation

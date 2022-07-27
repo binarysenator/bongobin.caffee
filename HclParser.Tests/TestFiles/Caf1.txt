@@ -155,67 +155,67 @@ service_bus_topics = {
     name                = "bookable-resources"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   crm_accountplan_accountplanbenefits_topic = {
     name                = "crm-accountplan-accountplanbenefits"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   crm_accountplanbenefits_topic = {
     name                = "crm-accountplanbenefits"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   crm_accountplans_topic = {
     name                = "crm-accountplans"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   crm_accounts_topic = {
     name                = "crm-accounts"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   crm_brands_topic = {
     name                = "crm-brands"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   crm_contacts_topic = {
     name                = "crm-contacts"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   crm_emergencycontacts_topic = {
     name                = "crm-emergencycontacts"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   crm_leads_topic = {
     name                = "crm-leads"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   crm_policies_topic = {
     name                = "crm-policies"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   crm_policypatients_topic = {
     name                = "crm-policypatients"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   diagnostic_results_topic = {
     name                = "diagnostic-results"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   user_accounts_topic = {
     name                = "user-accounts"
     resource_group_key  = "primary_rg"
     service_bus_namespace_key = "core_service_bus"
-  },
+  }
   configuration_topic = {
     name                = "configuration"
     resource_group_key  = "primary_rg"

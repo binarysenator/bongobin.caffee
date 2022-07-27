@@ -8,8 +8,7 @@ public class HclDocument : HclNode
     
     public HclParseResult Parse(string input)
     {
-        if ( string.IsNullOrWhiteSpace(input) ) return new HclParseResult(HclDocument.Empty);
-        var buffer = new StringBuilder();
+        if ( string.IsNullOrWhiteSpace(input) ) return new HclParseResult(Empty);
         var reader = new StringReader(input);
         ParseNode(this, reader);
         return new HclParseResult(this);

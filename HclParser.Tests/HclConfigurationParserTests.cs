@@ -62,13 +62,20 @@ namespace Bongobin.HclParser.Tests
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Document);
             Assert.IsNotNull(result.Document.Children);
-            Assert.AreEqual(16, result.Document.Groups.Count);
+
+
+            var namespacesGroup = result.Document["api_management_namespaces"];
+            Assert.IsNotNull(namespacesGroup);
+
             var clusterGroup = result.Document["aks_clusters"];
             Assert.IsNotNull(clusterGroup);
             Assert.AreEqual("aks_clusters", clusterGroup?.Name);
             Assert.AreEqual(1, clusterGroup?.Groups.Count);
             var clusterOne = clusterGroup?["cluster_1"];
             Assert.AreEqual("cluster_1", clusterOne?.Name);
+
+
+            Assert.AreEqual(16, result.Document.Groups.Count);
         }
 
         [Test]

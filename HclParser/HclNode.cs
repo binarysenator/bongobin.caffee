@@ -69,42 +69,53 @@ public abstract class HclNode
         if ( !trimmed.EndsWith(EmptyGroup) && (trimmed.EndsWith(CloseBrace) || trimmed.EndsWith((CloseBraceComma))) )
         {
             // Recurse back up as we have closed a section.
-            if (currentLine == "}")
+            if (trimmed == "}")
             {
-                parent.SetCloseText(currentLine);
-            }
-            else
-            {
-                parent.SetCloseText(currentLine);
+                if (reader.Peek() < 0)
+                {
+                    parent.SetCloseText(currentLine); // If this is the last line then we don't add a linefeed.
+                }
+                else
+                {
+                    parent.SetCloseText(currentLine + Environment.NewLine); // If this is the last line then we don't add a linefeed.
+                }
+                return;
             }
         }
 
         // Try splitting up on equalities
-        var assignment = trimmed.Split(Assignment);
-        if (assignment.Length == 2)
+        if (!trimmed.StartsWith('#'))
         {
-            var prefix = assignment[0].Trim();
-            var postfix = assignment[1];
+            var assignment = trimmed.Split(Assignment);
+            if (assignment.Length == 2)
+            {
+                var prefix = assignment[0].Trim();
+                var postfix = assignment[1];
 
-            // If the end of this line ends in a open brace then it's the start of a group
-            if ( postfix.EndsWith(OpenBrace) )
-            {
-                var group = new HclVariableGroup(prefix, currentLine);
-                group.ParseNode(group, reader);
-                parent.Add(group);
+                // If the end of this line ends in a open brace then it's the start of a group
+                if (postfix.EndsWith(OpenBrace))
+                {
+                    var group = new HclVariableGroup(prefix, currentLine);
+                    group.ParseNode(group, reader);
+                    parent.Add(group);
+                }
+                else if (postfix.EndsWith(EmptyGroup))
+                {
+                    // Likely to be a group that is empty
+                    var group = new HclVariableGroup(prefix, currentLine);
+                    parent.Add(group);
+                }
+                else
+                {
+                    // Just a variable.
+                    var variable = new HclStringVariableNode(prefix, postfix, currentLine);
+                    parent.Add(variable);
+                }
             }
-            else if (postfix.EndsWith(EmptyGroup))
-            {
-                // Likely to be a group that is empty
-                var group = new HclVariableGroup(prefix, currentLine);
-                parent.Add(group);
-            }
-            else
-            {
-                // Just a variable.
-                var variable = new HclStringVariableNode(prefix, postfix, currentLine);
-                parent.Add(variable);
-            }
+        }
+        else
+        {
+            Debug.WriteLine("Dodged a bullet.");
         }
 
         ParseNode(parent, reader);
