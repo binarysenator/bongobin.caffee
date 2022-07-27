@@ -2,8 +2,23 @@
 using Bongobin.HclParser.Exceptions;
 using caffee;
 using CommandLine;
+using CommandLine.Text;
 
 namespace Bongobin.Caffee;
+
+//[Verb("set", HelpText = "Sets a given variable on the document.")]
+//public class SetCommand : ICommand
+//{
+//    [Option('s', "variable", HelpText = "The variable to set the value for.")]
+//    public string? Variable { get; set; }
+    
+//    public string? Value { get; set; }
+    
+//    public void Execute()
+//    {
+//        return;
+//    }
+//}
 
 [Verb("merge", HelpText = "Merges all tfvars files into a single file")]
 public class MergeCommand : ICommand
@@ -12,6 +27,9 @@ public class MergeCommand : ICommand
     public string? WorkingDirectory { get; set; }
     public string? OutputDirectory { get; set; }
     public string? OutputFilename { get; set; } = "bongod.tfvars";
+
+    [Option('v', "variable", Required = false, HelpText = "Variables to set.")]
+    public IEnumerable<string> VariableSettings { get; set; }
 
     public void Execute()
     {
@@ -30,8 +48,7 @@ public class MergeCommand : ICommand
             return;
         }
 
-        var files = string.Join(",", tfVars);
-        Console.WriteLine($"Executing merge on files:");
+        Console.WriteLine("Executing merge on files:");
 
         var result = HclDocument.New();
 
@@ -40,7 +57,24 @@ public class MergeCommand : ICommand
             var hcl = HclDocument.FromFile(file);
             result.Merge(hcl);
         }
-        
+
+
+        foreach (var variableSetting in VariableSettings)
+        {
+            var parts = variableSetting.Split('=', 2, StringSplitOptions.TrimEntries);
+            var variableName = parts[0];
+            var variableValue = string.Empty;
+
+            if (parts.Length == 2)
+            {
+                variableValue = parts[1];
+            }
+
+            Console.WriteLine($"Setting variable {variableName} to {variableValue}...");
+            // We break the parts up into variable paths by using dot notation e.g. group.group.variable
+
+        }
+
         var outputFile = GetOutputFileName();
         Console.WriteLine($"Writing output file to {outputFile}...");
 
@@ -49,37 +83,11 @@ public class MergeCommand : ICommand
 
     private string GetOutputFileName()
     {
-        if (OutputDirectory != null)
-        {
-            return Path.Join(OutputDirectory, OutputFilename);
-        }
-        else
-        {
-            return Path.Join(GetWorkingDirectory(), OutputFilename); // Use working directory instead.
-        }
-    }
-
-    private string GetOutputDirectory()
-    {
-        if (OutputDirectory != null)
-        {
-            return OutputDirectory;
-        }
-        else
-        {
-            return Directory.GetCurrentDirectory();
-        }
+        return Path.Join(OutputDirectory ?? GetWorkingDirectory(), OutputFilename);
     }
 
     private string GetWorkingDirectory()
     {
-        if (WorkingDirectory != null)
-        {
-            return WorkingDirectory;
-        }
-        else
-        {
-            return Directory.GetCurrentDirectory();
-        }
+        return WorkingDirectory ?? Directory.GetCurrentDirectory();
     }
 }

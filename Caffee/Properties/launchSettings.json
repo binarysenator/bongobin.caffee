@@ -2,7 +2,7 @@
   "profiles": {
     "caffee": {
       "commandName": "Project",
-      "commandLineArgs": "-d \"C:\\Temp\""
+      "commandLineArgs": "-d \"D:\\BinarySenator\\Temp\" -v \"a=b\" \"c=d\""
     }
   }
 }

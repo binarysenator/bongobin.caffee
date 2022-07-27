@@ -13,3 +13,4 @@
 /HclParser/bin/Release/net6.0
 /HclParser.Tests/bin/Release/net6.0
 /.vs/ProjectEvaluation
+*.coverage
